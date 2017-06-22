@@ -34,6 +34,7 @@ import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import org.ohdsi.webapi.common.Executable;
 
 /**
  * JPA Entity for Cohort Definitions
@@ -46,7 +47,8 @@ import javax.persistence.Table;
     attributeNodes = { @NamedAttributeNode(value = "details", subgraph = "detailsGraph") },
     subgraphs = {@NamedSubgraph(name = "detailsGraph", type = CohortDefinitionDetails.class, attributeNodes = { @NamedAttributeNode(value="expression")})}
 )
-public class CohortDefinition implements Serializable{
+@Access(AccessType.FIELD)
+public class CohortDefinition extends Executable implements Serializable{
 
   private static final long serialVersionUID = 1L;
     
@@ -55,10 +57,6 @@ public class CohortDefinition implements Serializable{
   @Access(AccessType.PROPERTY) 
   private Integer id;
   
-  private String name;
-
-  private String description;
-
   @Enumerated(EnumType.STRING)
   @Column(name="expression_type")  
   private ExpressionType expressionType;
@@ -67,7 +65,8 @@ public class CohortDefinition implements Serializable{
   @JoinColumn(name="id")
   private CohortDefinitionDetails details;
 
-  @OneToMany(fetch= FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "cohortDefinition")
+  @OneToMany(fetch= FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "cohortDefinition",
+    targetEntity = CohortGenerationInfo.class)
   private Set<CohortGenerationInfo> generationInfoList;
   
   @Column(name="created_by")
@@ -88,24 +87,6 @@ public class CohortDefinition implements Serializable{
 
   public void setId(Integer id) {
     this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public CohortDefinition setName(String name) {
-    this.name = name;
-    return this;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public CohortDefinition setDescription(String description) {
-    this.description = description;
-    return this;
   }
 
   public ExpressionType getExpressionType() {
@@ -168,6 +149,16 @@ public class CohortDefinition implements Serializable{
   
   public CohortDefinition setGenerationInfoList(Set<CohortGenerationInfo> list) {
     this.generationInfoList = list;
+    return this;
+  }
+
+  public CohortDefinition withName(String name){
+    setName(name);
+    return this;
+  }
+
+  public CohortDefinition withDescription(String description){
+    setDescription(description);
     return this;
   }
 }

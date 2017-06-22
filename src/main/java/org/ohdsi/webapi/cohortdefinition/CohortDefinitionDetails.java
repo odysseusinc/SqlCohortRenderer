@@ -22,6 +22,7 @@ import javax.persistence.Lob;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import org.hibernate.annotations.Type;
 
 /**
  *
@@ -42,6 +43,7 @@ public class CohortDefinitionDetails implements Serializable {
   private CohortDefinition definition;
  
   @Lob
+  @Type(type = "org.hibernate.type.TextType")
   private String expression;
 
   public String getExpression() {
